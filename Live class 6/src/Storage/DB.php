@@ -2,23 +2,33 @@
 
 namespace App\Storage;
 
-use PDO;
 use PDOException;
+use PDO;
 
+// Singleton pattern implementation for the DB class
 class DB
 {
-    private string $hostName = 'localhost';
-    private string $database = 'test_db';
-    private string $userName = 'root';
-    private string $password = '';
-    private ?PDO $conn;
+    private static string $hostName = 'localhost';
+    private static string $databaseName = 'career_path';
+    private static string $userName = 'root';
+    private static string $password = '';
+    private static ?PDO $conn = null;
 
-    public function __construct()
+    private function __construct()
     {
+    }
+
+    public static function createConnection(): void
+    {
+        if (!self::$conn) {
+            return;
+        }
+
         try {
-            $this->conn = new PDO("mysql:host={$this->hostName};dbname={$this->database}", $this->userName, $this->password);
+            self::$conn = new PDO("mysql:host=" . self::$hostName. ";dbname=" . self::$databaseName. "", self::$userName, self::$password);
+
             // set the PDO error mode to exception
-            $this->conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+            self::$conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
             echo "Connected successfully\n";
         } catch(PDOException $e) {
             echo "Connection failed: " . $e->getMessage() . PHP_EOL;
@@ -28,15 +38,23 @@ class DB
     public function createTable(string $sql)
     {
         try {
-            $this->conn->exec($sql);
+            self::$conn->exec($sql);
         } catch (PDOException $e) {
-            echo $sql . "<br>" . $e->getMessage();
+            echo $e->getMessage();
+        }
+    }
 
+    public function insertData(string $sql)
+    {
+        try {
+            self::$conn->exec($sql);
+        } catch (PDOException $e) {
+            echo $e->getMessage();
         }
     }
 
     public function __destruct()
     {
-        $this->conn = null;
+        self::$conn = null;
     }
 }

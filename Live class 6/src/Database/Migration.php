@@ -6,22 +6,23 @@ use App\Storage\DB;
 
 class Migration
 {
-    public function __construct(public DB $db)
-    {
+    private DB $db;
 
+    public function __construct()
+    {
+        $this->db = DB::createConnection();
     }
 
-    public function run()
+    public function run(): void
     {
+        // read all files path from the given directory
         $files = glob(__DIR__ . "/migrations/*");
 
         foreach ($files as $file) {
             if (is_file($file)) {
+                // Get the given file's content which is SQL command for creating tables
                 $sql = file_get_contents($file);
-
                 $this->db->createTable($sql);
-
-                echo "Table: " . basename($file) . " created successfully";
             }
         }
     }
