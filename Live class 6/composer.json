@@ -1,0 +1,15 @@
+{
+    "name": "shaon/live_class_6",
+    "autoload": {
+        "psr-4": {
+            "App\\": "src/"
+        }
+    },
+    "authors": [
+        {
+            "name": "Ahmed shamim",
+            "email": ""
+        }
+    ],
+    "require": {}
+}
